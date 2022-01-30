@@ -2,7 +2,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/': {
-        target: 'https://localhost:5001',
+        target: 'https://cmsbackend.azurewebsites.net/',
       },
     },
   },
