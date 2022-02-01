@@ -4,14 +4,17 @@ import App from './App.vue';
 import router from './router';
 
 // Import the Auth0 configuration
-import { domain, clientId, audience } from '../auth_config.json';
+import {
+  domain, clientId, audience, baseUrl,
+} from '../auth_config.json';
 
 // Import the plugin here
 import { Auth0Plugin } from './auth/authWrapper';
 
 Vue.config.productionTip = false;
 
-const baseUrl = process.env.VUE_APP_API_URL;
+// Reading from environment does not work on Azure. read from config file instead.
+// const baseUrl = process.env.VUE_APP_API_URL;
 const axiosConfig = {
   baseURL: baseUrl,
   timeout: 30000,
