@@ -17,8 +17,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'myconventions',
   data() {
@@ -32,7 +30,7 @@ export default {
       const token = await this.$auth.getTokenSilently();
       const userId = this.$auth.user.email;
       // Use Axios to make a call to the API
-      const { data } = await axios.get(`/api/conventions/registered/${userId}`, {
+      const { data } = await this.$axios.get(`/api/conventions/registered/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`, // send the access token through the 'Authorization' header
         },

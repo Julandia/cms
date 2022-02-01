@@ -46,6 +46,19 @@ namespace ConventionManagementService
                 // Add Swagger Documentation
                 services.AddSwaggerGen();
             }
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                        builder =>
+                        {
+                            builder.AllowAnyOrigin();
+                            //builder.WithOrigins("https://happy-sky-0a342490f.1.azurestaticapps.net/",
+                            //                                  "http://locahlost")
+                            //                                  .AllowAnyHeader()
+                            //                                  .AllowAnyMethod();
+                        });
+            });
+
 
             services.AddControllers()
                     .AddMvcOptions(options =>
@@ -73,7 +86,10 @@ namespace ConventionManagementService
 
             app.UseRouting();
 
+            app.UseCors();
+
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

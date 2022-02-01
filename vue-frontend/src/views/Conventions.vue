@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 
 export default {
   name: 'conventions',
@@ -30,7 +30,7 @@ export default {
   methods: {
     async callGetConventions() {
       // Use Axios to make a call to the API
-      const { data } = await axios.get('/api/conventions');
+      const { data } = await this.$axios.get('/api/conventions');
       console.log(data);
       this.conventions = data;
       if (data.length === 0) {

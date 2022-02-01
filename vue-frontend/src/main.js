@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import axios from 'axios';
 import App from './App.vue';
 import router from './router';
 
@@ -9,6 +10,14 @@ import { domain, clientId, audience } from '../auth_config.json';
 import { Auth0Plugin } from './auth/authWrapper';
 
 Vue.config.productionTip = false;
+
+const baseUrl = process.env.VUE_APP_API_URL;
+const axiosConfig = {
+  baseURL: baseUrl,
+  timeout: 30000,
+};
+
+Vue.prototype.$axios = axios.create(axiosConfig);
 
 // Install the authentication plugin here
 Vue.use(Auth0Plugin, {

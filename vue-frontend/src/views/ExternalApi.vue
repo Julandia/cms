@@ -7,8 +7,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'external-api',
   data() {
@@ -19,7 +17,7 @@ export default {
   methods: {
     async callPing() {
       // Use Axios to make a call to the API
-      const { data } = await axios.get('/healthy/ping');
+      const { data } = await this.$axios.get('/healthy/ping');
 
       this.apiMessage = data;
     },
@@ -28,7 +26,7 @@ export default {
       const token = await this.$auth.getTokenSilently();
       const message = 'Hello';
       // Use Axios to make a call to the API
-      const { data } = await axios.post(`/healthy/echo?message=${message}`, '', {
+      const { data } = await this.$axios.post(`/healthy/echo?message=${message}`, '', {
         headers: {
           Authorization: `Bearer ${token}`, // send the access token through the 'Authorization' header
         },
