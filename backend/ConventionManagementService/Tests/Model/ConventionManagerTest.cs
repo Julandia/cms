@@ -206,29 +206,6 @@ namespace ConventionManagementServiceTest.Model
         }
 
         [Ignore, TestMethod]
-        public async Task GetConventionsByUserExpectUserRegistrationInfo()
-        {
-            foreach (var pair in _Managers)
-            {
-                IConventionManager manager = pair.Item1;
-                List<Convention> conventions = pair.Item2;
-                string conventionId = conventions[0].Id;
-                Event[] events = conventions[0].Events.ToArray();
-                string eventId1 = events[0].Id;
-                string userId = "test1@cm.com";
-
-                await manager.RegisterConvention(conventionId, userId, 10);
-                await manager.RegisterEvent(conventionId, eventId1, userId, 3);
-                List<Convention> allconventions = await ToListAsync(manager.GetConvetions(userId, 0));
-                Assert.AreEqual(2, allconventions.Count());
-                Assert.AreEqual(10, allconventions[0].UserInfo.NumberOfParticipants);
-                Assert.AreEqual(3, allconventions[0].Events.ToArray()[0].UserInfo.NumberOfParticipants);
-                Assert.IsNull(allconventions[1].UserInfo);
-                Assert.IsNull(allconventions[1].Events.ToArray()[0].UserInfo);
-            }
-        }
-
-        [Ignore, TestMethod]
         public async Task SaveConventionsToFile()
         {
             IConventionManager manager = _Managers[0].Item1;
