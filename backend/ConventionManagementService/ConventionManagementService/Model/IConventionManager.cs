@@ -46,15 +46,6 @@ namespace ConventionManagementService.Model
         IAsyncEnumerable<Convention> GetConvetions(int max);
 
         /// <summary>
-        /// Get all the conventions with informatoin about specified user,
-        /// e.g. how many participants are registered by this user.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="max">Return all if max is 0</param>
-        /// <returns></returns>
-        IAsyncEnumerable<Convention> GetConvetions(string userId, int max);
-
-        /// <summary>
         /// Get all the conventions registered by a user
         /// </summary>
         /// <param name="userId"></param>

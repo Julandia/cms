@@ -102,47 +102,6 @@ namespace ConventionManagementService.Model
         }
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<Convention> GetConvetions(string userId, int max = 0)
-        {
-            lock (SysObj)
-            {
-                int count = 0;
-                foreach(Convention convention in _Conventions.Values) {
-                    if (max > 0 && count++ > max)
-                    {
-                        break;
-                    }
-                    var userConvention = (Convention)convention.Clone(); //TODO: use json serialization instead of clone
-                    UserRegistrationInfo<Convention>  registrationInfo = GetRegisteredConvention(convention.Id, userId);
-                    if (registrationInfo != null)
-                    {
-                        userConvention.UserInfo = new UserInfo
-                        {
-                            UserId = userId,
-                            NumberOfParticipants = registrationInfo.NumberOfParticipants
-                        };
-                    }
-
-                    foreach(Event ev in convention.Events)
-                    {
-                        UserRegistrationInfo<Event> eventRegistrationInfo = GetRegisteredEvent(convention.Id, ev.Id, userId);
-                        if (eventRegistrationInfo != null)
-                        {
-                            ev.UserInfo = new UserInfo
-                            {
-                                UserId = userId,
-                                NumberOfParticipants = eventRegistrationInfo.NumberOfParticipants
-                            };
-                        }
-                    }
-                    yield return userConvention;
-                }
-            }
-
-            await Task.Delay(1);
-        }
-
-        /// <inheritdoc />
         public async IAsyncEnumerable<Convention> GetRegisteredConvetions(string userId)
         {
             lock (SysObj)

@@ -250,11 +250,6 @@ namespace ConventionManagementService.Model
             return GetItems<Convention>(max);
         }
 
-        public IAsyncEnumerable<Convention> GetConvetions(string userId, int max)
-        {
-            throw new NotImplementedException();
-        }
-
         public async IAsyncEnumerable<Convention> GetRegisteredConvetions(string userId)
         {
             var registration = await GetItem<Registration>(userId);

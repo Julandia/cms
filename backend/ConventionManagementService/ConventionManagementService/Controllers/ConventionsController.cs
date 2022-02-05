@@ -69,15 +69,6 @@ namespace ConventionManagementService.Controllers
         }
 
         // Get api/conventions?max=10
-        [HttpGet("userConvention/{userId}")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IAsyncEnumerable<Convention> Get([FromRoute]string userId, [FromQuery]int max)
-        {
-            return _ConventionManager.GetConvetions(userId, max);
-        }
-
-        // Get api/conventions?max=10
         [HttpGet("registered/{userId}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
