@@ -26,7 +26,7 @@ namespace ConventionManagementService
                     await _Next.Invoke(context);
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = 500;

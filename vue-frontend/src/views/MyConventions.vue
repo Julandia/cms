@@ -5,10 +5,10 @@
     <p>{{this.message}}</p>
     <ul>
         <li v-for="(convention, index) in conventions" :key="index">
-          <p>{{convention.title}}</p>
+          {{convention.title}} ({{convention.userInfo.numberOfParticipants}}/{{convention.totalNumberOfParticipants}})
           <ul>
              <li v-for="(event, evindex) in convention.events" :key="evindex">
-               <p>{{event.title}}</p>
+               {{event.title}}
              </li>
           </ul>
         </li>
@@ -35,7 +35,6 @@ export default {
           Authorization: `Bearer ${token}`, // send the access token through the 'Authorization' header
         },
       });
-      console.log(data);
       this.conventions = data;
       if (data.length === 0) {
         this.message = 'You do not have any registered conventions.';

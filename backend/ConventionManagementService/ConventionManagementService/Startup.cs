@@ -109,7 +109,7 @@ namespace ConventionManagementService
 
         private bool IsOriginAllowed(string origin)
         {
-            return _AllowedOrigins != null ?_AllowedOrigins.Any(item => !string.IsNullOrEmpty(origin) && origin.Contains(item)) : false;
+            return _AllowedOrigins != null ?_AllowedOrigins.Any(item => !string.IsNullOrEmpty(origin) && origin.Trim().Contains(item)) : false;
         }
 
         private bool EnableSwagger()
