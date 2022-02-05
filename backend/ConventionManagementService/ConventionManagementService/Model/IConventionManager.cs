@@ -43,7 +43,7 @@ namespace ConventionManagementService.Model
         /// </summary>
         /// <param name="max">Return all if max is 0</param>
         /// <returns></returns>
-        Task<IEnumerable<Convention>> GetConvetions(int max);
+        IAsyncEnumerable<Convention> GetConvetions(int max);
 
         /// <summary>
         /// Get all the conventions with informatoin about specified user,
@@ -52,14 +52,14 @@ namespace ConventionManagementService.Model
         /// <param name="userId"></param>
         /// <param name="max">Return all if max is 0</param>
         /// <returns></returns>
-        Task<IEnumerable<Convention>> GetConvetions(string userId, int max);
+        IAsyncEnumerable<Convention> GetConvetions(string userId, int max);
 
         /// <summary>
         /// Get all the conventions registered by a user
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<IEnumerable<Convention>> GetRegisteredConvetions(string userId);
+        IAsyncEnumerable<Convention> GetRegisteredConvetions(string userId);
 
         
         /// <summary>
@@ -92,6 +92,12 @@ namespace ConventionManagementService.Model
         /// <param name="conventions"></param>
         /// <returns></returns>
         Task PopulateData();
+
+        /// <summary>
+        /// Clear all the conventions and registrations
+        /// </summary>
+        /// <returns></returns>
+        Task Clear();
     }
 
     public class ValidationException : Exception
