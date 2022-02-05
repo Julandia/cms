@@ -13,6 +13,8 @@ namespace ConventionManagementService
 {
     public class Startup
     {
+        private string[] _AllowedOrigins;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,6 +27,7 @@ namespace ConventionManagementService
         {
             IConfigurationSection cosmosDbConfig = Configuration.GetSection("CosmosDb");
             services.Configure<CosmosDbConfig>(cosmosDbConfig);
+            _AllowedOrigins = Configuration["AllowedOrigins"].Split(";");
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -106,8 +109,7 @@ namespace ConventionManagementService
 
         private bool IsOriginAllowed(string origin)
         {
-            string[] allowedOrigins = new[] {"happy-sky-0a342490f.1.azurestaticapps.net", "locahlost" };
-            return allowedOrigins.Any(item => origin.Contains(item));
+            return _AllowedOrigins != null ?_AllowedOrigins.Any(item => !string.IsNullOrEmpty(origin) && origin.Contains(item)) : false;
         }
 
         private bool EnableSwagger()
