@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace ConventionManagementService.Model
 
     public class Event : ICloneable
     {
+        [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
         public EventType Type { get; set; }

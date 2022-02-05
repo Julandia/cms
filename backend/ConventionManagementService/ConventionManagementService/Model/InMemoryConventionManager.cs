@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 
 namespace ConventionManagementService.Model
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Manage conventions and registrations in memory
+    /// </summary>
     public class InMemoryConventionManager : IConventionManager
     {
         private object SysObj = new object();
@@ -84,29 +86,33 @@ namespace ConventionManagementService.Model
         }
 
         /// <inheritdoc />
-        public Task<IEnumerable<Convention>> GetConvetions(int max)
+        public async IAsyncEnumerable<Convention> GetConvetions(int max)
         {
             lock (SysObj)
             {
-                return max > 0 ? Task.FromResult(_Conventions.Values.Take(max)) :
-                Task.FromResult(_Conventions.Values as IEnumerable<Convention>);
+                int count = 0;
+                foreach(var convention in _Conventions.Values)
+                {
+                    if (max != 0 && count++ >= max) { break; }
+                    yield return convention;
+                }
             }
+
+            await Task.Delay(1);
         }
 
         /// <inheritdoc />
-        public Task<IEnumerable<Convention>> GetConvetions(string userId, int max = 0)
+        public async IAsyncEnumerable<Convention> GetConvetions(string userId, int max = 0)
         {
             lock (SysObj)
             {
-                var userConventions = new List<Convention>();
                 int count = 0;
                 foreach(Convention convention in _Conventions.Values) {
                     if (max > 0 && count++ > max)
                     {
-                        continue;
+                        break;
                     }
                     var userConvention = (Convention)convention.Clone(); //TODO: use json serialization instead of clone
-                    userConventions.Add(userConvention);
                     UserRegistrationInfo<Convention>  registrationInfo = GetRegisteredConvention(convention.Id, userId);
                     if (registrationInfo != null)
                     {
@@ -129,49 +135,48 @@ namespace ConventionManagementService.Model
                             };
                         }
                     }
+                    yield return userConvention;
                 }
-
-                return Task.FromResult(userConventions as IEnumerable<Convention>);
             }
+
+            await Task.Delay(1);
         }
 
         /// <inheritdoc />
-        public Task<IEnumerable<Convention>> GetRegisteredConvetions(string userId)
+        public async IAsyncEnumerable<Convention> GetRegisteredConvetions(string userId)
         {
             lock (SysObj)
             {
-                var userConventions = new List<Convention>();
                 List<UserRegistrationInfo<Convention>> registeredConventions;
-                if (!_UserConventions.TryGetValue(userId, out registeredConventions))
+                if (_UserConventions.TryGetValue(userId, out registeredConventions))
                 {
-                    return Task.FromResult(userConventions as IEnumerable<Convention>);
-                }
-                foreach (UserRegistrationInfo<Convention> registrationInfo in registeredConventions)
-                {
-                    Convention convention = registrationInfo.Target;
-                    var userConvention = (Convention)convention.Clone(); //TODO: use json serialization instead of clone
-                    userConventions.Add(userConvention);
-                    userConvention.UserInfo = new UserInfo
+                    foreach (UserRegistrationInfo<Convention> registrationInfo in registeredConventions)
                     {
-                        UserId = userId,
-                        NumberOfParticipants = registrationInfo.NumberOfParticipants
-                    };
-                    foreach (Event ev in convention.Events)
-                    {
-                        UserRegistrationInfo<Event> eventRegistrationInfo = GetRegisteredEvent(convention.Id, ev.Id, userId);
-                        if (eventRegistrationInfo != null)
+                        Convention convention = registrationInfo.Target;
+                        var userConvention = (Convention)convention.Clone(); //TODO: use json serialization instead of clone
+                        userConvention.UserInfo = new UserInfo
                         {
-                            ev.UserInfo = new UserInfo
+                            UserId = userId,
+                            NumberOfParticipants = registrationInfo.NumberOfParticipants
+                        };
+                        foreach (Event ev in convention.Events)
+                        {
+                            UserRegistrationInfo<Event> eventRegistrationInfo = GetRegisteredEvent(convention.Id, ev.Id, userId);
+                            if (eventRegistrationInfo != null)
                             {
-                                UserId = userId,
-                                NumberOfParticipants = eventRegistrationInfo.NumberOfParticipants
-                            };
+                                ev.UserInfo = new UserInfo
+                                {
+                                    UserId = userId,
+                                    NumberOfParticipants = eventRegistrationInfo.NumberOfParticipants
+                                };
+                            }
                         }
+                        yield return userConvention;
                     }
                 }
-
-                return Task.FromResult(userConventions as IEnumerable<Convention>);
             }
+
+            await Task.Delay(1);
         }
 
         /// <inheritdoc />
@@ -321,6 +326,17 @@ namespace ConventionManagementService.Model
             string text = await File.ReadAllTextAsync("ConventionData.json");
             var conventions = JsonConvert.DeserializeObject<IEnumerable<Convention>>(text);
             return conventions;
+        }
+
+        public Task Clear()
+        {
+            lock(SysObj)
+            {
+                _Conventions.Clear();
+                _UserConventions.Clear();
+                _UserEvents.Clear();
+                return Task.CompletedTask;
+            }
         }
 
         private class UserRegistrationInfo<T>

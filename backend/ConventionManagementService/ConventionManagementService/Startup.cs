@@ -6,12 +6,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 using System.Security.Claims;
 
 namespace ConventionManagementService
 {
     public class Startup
     {
+        private string[] _AllowedOrigins;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -22,6 +25,9 @@ namespace ConventionManagementService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IConfigurationSection cosmosDbConfig = Configuration.GetSection("CosmosDb");
+            services.Configure<CosmosDbConfig>(cosmosDbConfig);
+            _AllowedOrigins = Configuration["AllowedOrigins"].Split(";");
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -39,7 +45,7 @@ namespace ConventionManagementService
                 options.AddPolicy("CRUD", policy =>
                                   policy.RequireClaim("permissions", "crud:conventions"));
             });
-            services.AddSingleton<IConventionManager, InMemoryConventionManager>();
+            services.AddSingleton<IConventionManager, DatabaseConventionManager>();
 
             if (EnableSwagger())
             {
@@ -51,14 +57,15 @@ namespace ConventionManagementService
                 options.AddDefaultPolicy(
                         builder =>
                         {
-                            builder.AllowAnyOrigin();
-                            //builder.WithOrigins("https://happy-sky-0a342490f.1.azurestaticapps.net/",
-                            //                                  "http://locahlost")
-                            //                                  .AllowAnyHeader()
-                            //                                  .AllowAnyMethod();
+                            //builder.AllowAnyOrigin();
+                            builder.WithOrigins("https://happy-sky-0a342490f.1.azurestaticapps.net/",
+                                                              "http://locahlost")
+                                                              .AllowAnyHeader()
+                                                              .AllowAnyMethod();
                         });
             });
 
+            services.AddApplicationInsightsTelemetry();
 
             services.AddControllers()
                     .AddMvcOptions(options =>
@@ -86,16 +93,23 @@ namespace ConventionManagementService
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(options => options.SetIsOriginAllowed(IsOriginAllowed).AllowAnyMethod().AllowAnyHeader());
 
             app.UseAuthentication();
 
             app.UseAuthorization();
 
+            app.UseExceptionHandler();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private bool IsOriginAllowed(string origin)
+        {
+            return _AllowedOrigins != null ?_AllowedOrigins.Any(item => !string.IsNullOrEmpty(origin) && origin.Trim().Contains(item)) : false;
         }
 
         private bool EnableSwagger()

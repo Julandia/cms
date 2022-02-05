@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ConventionManagementService.Model
 {
     public class Convention : ICloneable
     {
+        [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
         public string Title { get; set; }
@@ -20,6 +21,8 @@ namespace ConventionManagementService.Model
         public IEnumerable<Event> Events { get; set; }
 
         public UserInfo UserInfo { get; set; }
+
+        public bool IsDeleted { get; set; }
 
         public object Clone()
         {
