@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\SHS\.nuget\packages\microsoft.azure.cosmos\3.24.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
     <Content Remove="ConventionData.json" />
   </ItemGroup>
 
