@@ -45,7 +45,7 @@ namespace ConventionManagementService
                 options.AddPolicy("CRUD", policy =>
                                   policy.RequireClaim("permissions", "crud:conventions"));
             });
-            services.AddSingleton<IConventionManager, DatabaseConventionManager>();
+            services.AddSingleton<IConventionManager, InMemoryConventionManager>();
 
             if (EnableSwagger())
             {
@@ -88,7 +88,7 @@ namespace ConventionManagementService
 
             app.UseAuthorization();
 
-            app.UseExceptionHandler();
+            //app.UseExceptionHandler();
 
             app.UseEndpoints(endpoints =>
             {

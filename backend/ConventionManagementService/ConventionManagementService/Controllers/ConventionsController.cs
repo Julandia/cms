@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ConventionManagementService.Controllers
 {
+    [Route("")]
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
