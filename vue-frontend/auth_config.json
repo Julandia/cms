@@ -2,5 +2,5 @@
     "domain": "dev-shs-conventionbooking.eu.auth0.com",
     "clientId": "uT5HLd15km3yE8zWYWSKQKaDUIDDaLhB",
     "audience": "https://ConventionManagementAPI",
-    "baseUrl": "http://localhost:5000"
+    "baseUrl": "http://cms-lb-1241120212.eu-north-1.elb.amazonaws.com:8080"
   }
